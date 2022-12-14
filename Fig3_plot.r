@@ -2,9 +2,9 @@
 ## setup ##
 ###########
 library(raster)
-source("../gitProjectExtras/gitBasedProjects/R/sourceAllLibs.r")
-sourceAllLibs("../gitProjectExtras/gitBasedProjects/R/")
-sourceAllLibs("../rasterextrafuns/rasterExtras/R/")
+source("libs/sourceAllLibs.r")
+#sourceAllLibs("../gitProjectExtras/gitBasedProjects/R/")
+#sourceAllLibs("../rasterextrafuns/rasterExtras/R/")
 #library(rasterExtras)
 #library(gitBasedProjects)
 library(ncdf4)
