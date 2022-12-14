@@ -2,8 +2,7 @@
 import os
 import glob
 import sys
-sys.path.append('/net/home/h03/kwilliam/other_fcm/jules_py/trunk/jules/')
-#~kwilliam/other_fcm/jules_py/trunk/jules/jules.py
+sys.path.append('~kwilliam/other_fcm/jules_py/trunk/jules/')
 import jules
 import iris
 import cf_units
@@ -27,7 +26,7 @@ countries = cfeature.NaturalEarthFeature(category='cultural',
                                          facecolor='none')
 
 
-folder = '/scratch/cburton/scratch/ISIMIP_PAPER/HadGEM2'
+folder = '/MyScratchFolder/HadGEM2'
 
 ###### Plot 6 maps ####
 
@@ -41,12 +40,12 @@ PR2 = PR2.collapsed(['time'], iris.analysis.MEAN)
 PR1 = jules.load_cube(folder+'/2010-2019/Years.nc',iris.Constraint(cube_func=lambda x: x.var_name == 'precip'),missingdata=np.ma.masked).collapsed(['time'], iris.analysis.MEAN)*86400*360
 PRchange = PR2-PR1
 
-cube = jules.load_cube('/scratch/cburton/scratch/ISIMIP_PAPER/HadGEM2/hadgem2-es_c20c.gen_ann_gb.1921.nc',iris.Constraint(cube_func=lambda x: x.var_name == 'tstar_gb'),missingdata=np.ma.masked).collapsed(['time'], iris.analysis.MEAN)
+cube = jules.load_cube('/MyScratchFolder/HadGEM2/hadgem2-es_c20c.gen_ann_gb.1921.nc',iris.Constraint(cube_func=lambda x: x.var_name == 'tstar_gb'),missingdata=np.ma.masked).collapsed(['time'], iris.analysis.MEAN)
 
 
-QW2= iris.load('/scratch/cburton/scratch/ISIMIP_PAPER/DRIVE/hurs_day_HadGEM2-ES_rcp60_r1i1p1_EWEMBI_20910101-20991231.nc')
+QW2= iris.load('/MyScratchFolder/DRIVE/hurs_day_HadGEM2-ES_rcp60_r1i1p1_EWEMBI_20910101-20991231.nc')
 QW2=QW2[1].collapsed(['time'], iris.analysis.MEAN)
-QW1 = iris.load('/scratch/cburton/scratch/ISIMIP_PAPER/DRIVE/hurs_day_HadGEM2-ES_rcp60_r1i1p1_EWEMBI_20110101-20201231.nc')
+QW1 = iris.load('/MyScratchFolder/DRIVE/hurs_day_HadGEM2-ES_rcp60_r1i1p1_EWEMBI_20110101-20201231.nc')
 QW1=QW1[1].collapsed(['time'], iris.analysis.MEAN)
 
 QWchange = QW2-QW1
@@ -76,7 +75,7 @@ Ag1 = jules.load_cube(folder+'/2010-2019/PFTYears.nc',iris.Constraint(cube_func=
 Ag1 = Ag1[6,:,:]+Ag1[9,:,:]
 
 Agchange = Ag2-Ag1
-iris.save(Agchange, '/scratch/cburton/scratch/ISIMIP_PAPER/Agchange.nc')
+iris.save(Agchange, '/MyScratchFolder/Agchange.nc')
 
 
 #####~~~~~~~~PLOTS~~~~~~~#######
@@ -122,14 +121,5 @@ plt.show()
 raise Exception('Stop')
 
 
-'''
-plt.subplot(2,4,3)
-iplt.pcolormesh(ETchange, vmin=-0.8, vmax=0.8,cmap='coolwarm')
-plt.gca().coastlines()
-plt.gca().add_feature(countries, lw=0.3) 
-plt.colorbar(orientation='horizontal', label='kg/m$^2$/day',ticks=[-0.8,-0.4,0,0.4,0.8])
-plt.title('ET')
-
-'''
 
 

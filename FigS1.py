@@ -2,8 +2,7 @@
 import os
 import glob
 import sys
-sys.path.append('/net/home/h03/kwilliam/other_fcm/jules_py/trunk/jules/')
-#~kwilliam/other_fcm/jules_py/trunk/jules/jules.py
+sys.path.append('~kwilliam/other_fcm/jules_py/trunk/jules/')
 import jules
 import iris
 
@@ -26,7 +25,7 @@ import cftime
 
 def Regrid(cube):
     var_constraint = iris.Constraint(cube_func=lambda x: x.var_name == 'burnt_area_gb')
-    file1 = jules.load_cube('/scratch/cburton/scratch/ISIMIP_PAPER/GFDL/gfdl-esm2m_c20c.gen_ann_gb.1861.nc', var_constraint,  missingdata=np.ma.masked)*86400*360
+    file1 = jules.load_cube('/MyScratchFolder/GFDL/gfdl-esm2m_c20c.gen_ann_gb.1861.nc', var_constraint,  missingdata=np.ma.masked)*86400*360
     cs_new = iris.coord_systems.GeogCS(6371229.)
     file1.coord('latitude').coord_system = cs_new
     file1.coord('longitude').coord_system = cs_new
@@ -37,12 +36,12 @@ def Regrid(cube):
 
 
 ### Get GFED data
-GFED = iris.load_cube('/data/cr1/cburton/GFED/GFED4s_AnnualTotalBA_2001-2016.nc')
+GFED = iris.load_cube('$DATADIR/GFED/GFED4s_AnnualTotalBA_2001-2016.nc')
 GFED = Regrid(GFED)
 GFED = GFED.collapsed(['time'], iris.analysis.MEAN)
 
 ### Get Fire CCI data
-CCI = iris.load_cube('/data/cr1/cburton/FireCCI/2001-2016_Annual_BAFrac_CB.nc')
+CCI = iris.load_cube('$DATADIR/FireCCI/2001-2016_Annual_BAFrac_CB.nc')
 CCI = Regrid(CCI)
 CCI = CCI.collapsed(['time'], iris.analysis.MEAN)
 
@@ -50,7 +49,7 @@ CCI = CCI.collapsed(['time'], iris.analysis.MEAN)
 
 
 ####### Get JULES data ######
-folder = '/scratch/cburton/scratch/ISIMIP_PAPER'
+folder = '/MyScratchFolder'
 SectoAnn = 86400*360
 
 var_constraint = iris.Constraint(cube_func=lambda x: x.var_name == 'burnt_area_gb')

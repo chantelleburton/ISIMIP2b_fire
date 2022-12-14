@@ -1,8 +1,7 @@
 import os
 import glob
 import sys
-sys.path.append('/net/home/h03/kwilliam/other_fcm/jules_py/trunk/jules/')
-#~kwilliam/other_fcm/jules_py/trunk/jules/jules.py
+sys.path.append('~kwilliam/other_fcm/jules_py/trunk/jules/')
 import jules
 import iris
 import cf_units
@@ -32,8 +31,8 @@ import csv
 
 '''
 # First calcualtion for Temperature, saved out
-#PI = iris.load_cube('/scratch/cburton/ISIMIP_PAPER/DRIVE/HADGEM2-ES/*historical*.nc')
-    files = '/scratch/cburton/ISIMIP_PAPER/DRIVE/'+model+'*/tas_day_'+model+'*_historical_r1i1p1_EWEMBI_18*.nc'
+#PI = iris.load_cube('/MyScratchFolder/DRIVE/HADGEM2-ES/*historical*.nc')
+    files = '/MyScratchFolder/DRIVE/'+model+'*/tas_day_'+model+'*_historical_r1i1p1_EWEMBI_18*.nc'
     cubelist  = iris.load(files)
     iris.util.unify_time_units(cubelist)
     PI = cubelist.concatenate_cube()
@@ -48,7 +47,7 @@ import csv
     weights = iris.analysis.cartography.area_weights(PI)
     PIOut = PI.collapsed(coords, iris.analysis.MEAN, weights = weights) 
 
-    Future = iris.load_cube('/scratch/cburton/ISIMIP_PAPER/DRIVE/'+model+'*/Years.nc')
+    Future = iris.load_cube('/MyScratchFolder/DRIVE/'+model+'*/Years.nc')
     Future.convert_units('celsius')
     #Change daily data to monthly, within several years
     iris.coord_categorisation.add_month(Future, 'time', name='month')
@@ -56,7 +55,7 @@ import csv
     FutureOut = Future.aggregated_by(['year'],iris.analysis.MEAN)
 
     Temp = FutureOut-PIOut
-    iris.save(Temp, '/scratch/cburton/ISIMIP_PAPER/DRIVE/'+model+'_TempCAbovePI.nc')
+    iris.save(Temp, '/MyScratchFolder/DRIVE/'+model+'_TempCAbovePI.nc')
     print ('saved',model)
 '''
 
@@ -84,7 +83,7 @@ def CalcWorld(cube):
     grid_weights = iris.analysis.cartography.area_weights(cube)
 
     var_constraint2 = iris.Constraint(cube_func=lambda x: x.var_name == 'field36')
-    landmask = iris.load_cube('/hpc/data/d05/hadaw/HadGEM3-GA6/Ancils/GA7_Ancil/CRU-NCEPv7.landfrac.nc', var_constraint2)
+    landmask = iris.load_cube('$DATADIR/IMPORTANT/CRU-NCEPv7.landfrac.nc', var_constraint2)
     landmask = landmask.regrid(cube, iris.analysis.Linear())
     cube = cube*landmask
 
@@ -99,7 +98,7 @@ def CalcWorld(cube):
 def CalcRegion(mydata, model, fire):
     
     var_constraint = iris.Constraint(cube_func=lambda x: x.var_name == 'basis_regions')
-    GFED1 = iris.load_cube('/home/h01/cburton/PAPERS/3.FutureFiresGlobal/Data/GFED.nc')
+    GFED1 = iris.load_cube('/MyPaperFolder/3.FutureFiresGlobal/Data/GFED.nc')
 
     region = mydata.copy()
     GFED = GFED1.regrid(mydata, iris.analysis.Linear()) 
@@ -137,7 +136,7 @@ def CalcRegion(mydata, model, fire):
             TOT = TOT[:-1]
         cube_dict[key] = TOT
 
-        f = open('/home/h01/cburton/PAPERS/3.FutureFiresGlobal/Data/NBP.dat','a')
+        f = open('/MyPaperFolder/3.FutureFiresGlobal/Data/NBP.dat','a')
         np.savetxt(f,(model,key,fire,TOT.data),newline=' ',fmt='  %s')
         f.write('\n')
         f.close()
@@ -162,18 +161,18 @@ NBPdict = {}
 for model in models:
 
         #Calc Global Mean Temp from driving data
-        Temp = iris.load_cube('~/PAPERS/3.FutureFiresGlobal/Data/DRIVE/'+model+'_TempCAbovePI.nc')
+        Temp = iris.load_cube('/MyPaperFolder/3.FutureFiresGlobal/Data/DRIVE/'+model+'_TempCAbovePI.nc')
         TEMP = CalcTemp(Temp)
         NBPdict['_TEMP_'+model] = TEMP
 
-        f = open('/home/h01/cburton/PAPERS/3.FutureFiresGlobal/Data/NBP.dat','a')
+        f = open('/MyPaperFolder/3.FutureFiresGlobal/Data/NBP.dat','a')
         np.savetxt(f,(model,'Glob','Temp',TEMP.data),newline=' ',fmt='  %s')
         f.write('\n')
         f.close()
 
         # NBP Fire ON
         print ('starting FIRE ON')
-        NBP_ON = iris.load_cube('/home/h01/cburton/PAPERS/3.FutureFiresGlobal/Data/NBPyears/'+model+'*_ALL.nc')
+        NBP_ON = iris.load_cube('/MyPaperFolder/3.FutureFiresGlobal/Data/NBPyears/'+model+'*_ALL.nc')
         print(NBP_ON)
 
         NBP_ON=NBP_ON[:,0,:,:]
@@ -182,7 +181,7 @@ for model in models:
         GLOB = CalcWorld(NBP_ON)
         NBPdict['_GlobON_'+model] = GLOB
 
-        f = open('/home/h01/cburton/PAPERS/3.FutureFiresGlobal/Data/NBP.dat','a')
+        f = open('/MyPaperFolder/3.FutureFiresGlobal/Data/NBP.dat','a')
         np.savetxt(f,(model,'Glob','NBP F-ON',GLOB.data),newline=' ',fmt='  %s')
         f.write('\n')
         f.close()
@@ -193,14 +192,14 @@ for model in models:
 
         # NBP Fire OFF
         print ('starting FIRE OFF')
-        NBP_OFF = iris.load_cube('/home/h01/cburton/PAPERS/3.FutureFiresGlobal/Data/NBPyears_FireOff/'+model+'*_ALL.nc')
+        NBP_OFF = iris.load_cube('/MyPaperFolder/3.FutureFiresGlobal/Data/NBPyears_FireOff/'+model+'*_ALL.nc')
         NBP_OFF=NBP_OFF[:,0,:,:]
         NBP_OFF.data[np.where(np.isnan(NBP_OFF.data))] = 0.0
         ### Calc world
         GLOB_OFF = CalcWorld(NBP_OFF)
         NBPdict['_GlobOFF_'+model]= GLOB_OFF
 
-        f = open('/home/h01/cburton/PAPERS/3.FutureFiresGlobal/Data/NBP.dat','a')
+        f = open('/MyPaperFolder/3.FutureFiresGlobal/Data/NBP.dat','a')
         np.savetxt(f,(model,'Glob','NBP F-OFF',GLOB_OFF.data),newline=' ',fmt='  %s')
         f.write('\n')
         f.close()
@@ -232,7 +231,7 @@ for region in regions:
 ##Alternative script for saving out data into text file
 models = ('H','G', 'I', 'M')
 for model in models:
-    with open('/scratch/cburton/ISIMIP_PAPER/KSscripts/NBP/RESULTS_NBP.txt', 'a') as f:
+    with open('/MyScratchFolder/NBP/RESULTS_NBP.txt', 'a') as f:
         writer = csv.writer(f, delimiter=",")
         writer.writerow(model.split())
         #writer.writerow("Year".split())

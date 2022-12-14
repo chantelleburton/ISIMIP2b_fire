@@ -1,16 +1,10 @@
 
-#export PATH=/project/avd/sss/temp_envs/miniconda3/bin:$PATH
-#export LD_LIBRARY_PATH=/usr/lib64/atlas:$LD_LIBRARY_PATH
-#. activate default_legacy-2018_05_03
-
 import os
 import glob
 import sys
-sys.path.append('/net/home/h03/kwilliam/other_fcm/jules_py/trunk/jules/')
-#~kwilliam/other_fcm/jules_py/trunk/jules/jules.py
+sys.path.append('~other_fcm/jules_py/trunk/jules/')
 import jules
 import iris
-
 import matplotlib as mpl
 import pylab
 import matplotlib.pyplot as plt
@@ -30,7 +24,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 '''
 var_constraint = iris.Constraint(cube_func=lambda x: x.var_name == 'frac')
-cube = jules.load_cube('/scratch/cburton/ISIMIP_PAPER/GFDL/2000-2010/*2000*.nc', var_constraint).collapsed(['time'], iris.analysis.MEAN) 
+cube = jules.load_cube('/MyScratchFolder/GFDL/2000-2010/*2000*.nc', var_constraint).collapsed(['time'], iris.analysis.MEAN) 
 cube = cube[0] 
 
 
@@ -128,8 +122,8 @@ raise Exception('stop')
 
 ### Get  CCI data
 var_constraint = iris.Constraint(cube_func=lambda x: x.var_name == 'frac')
-CCI = iris.load_cube('/project/LandCoverCCI/V1/ancils/n96eFracCover_v1.6.1_9PFT_2010/LC_CCI/vegfrac_lc-cci_9PFTs_2010_v1.6.1.nc')
-cube = jules.load_cube('/scratch/cburton/scratch/ISIMIP_PAPER/GFDL/2010-2019/PFTYears.nc', var_constraint).collapsed(['time'], iris.analysis.MEAN)
+CCI = iris.load_cube('/MyPaperFolder/Data/vegfrac_lc-cci_9PFTs_2010_v1.6.1.nc')
+cube = jules.load_cube('/MyScratchFolder/GFDL/2010-2019/PFTYears.nc', var_constraint).collapsed(['time'], iris.analysis.MEAN)
 cs_new = iris.coord_systems.GeogCS(6371229.)
 CCI.coord('latitude').coord_system = cs_new
 CCI.coord('longitude').coord_system = cs_new
@@ -154,7 +148,7 @@ models = ('GFDL', 'IPSL', 'MIROC','HadGEM2')
 PD = {}
 for model in models:
     var_constraint = iris.Constraint(cube_func=lambda x: x.var_name == 'frac')
-    cube = jules.load_cube('/scratch/cburton/scratch/ISIMIP_PAPER/'+model+'/2010-2019/PFTYears.nc', var_constraint).collapsed(['time'], iris.analysis.MEAN) 
+    cube = jules.load_cube('/MyScratchFolder/'+model+'/2010-2019/PFTYears.nc', var_constraint).collapsed(['time'], iris.analysis.MEAN) 
     PD['BETr'+model] = cube[1,:,:]
     PD['BETe'+model] = cube[2,:,:]
     PD['BLD'+model] = cube[0,:,:]
@@ -181,7 +175,7 @@ PD_BS = (PD['BSGFDL']+PD['BSIPSL']+PD['BSMIROC']+PD['BSHadGEM2'])/4
 Fut15 = {}
 for model in models:
     var_constraint = iris.Constraint(cube_func=lambda x: x.var_name == 'frac')
-    cube = jules.load_cube('/scratch/cburton/scratch/ISIMIP_PAPER/'+model+'/RCP60_1p5/Years_PFTlayers.nc', var_constraint).collapsed(['time'], iris.analysis.MEAN) 
+    cube = jules.load_cube('/MyScratchFolder/'+model+'/RCP60_1p5/Years_PFTlayers.nc', var_constraint).collapsed(['time'], iris.analysis.MEAN) 
     Fut15['BETr'+model] = cube[1,:,:]
     Fut15['BETe'+model] = cube[2,:,:]
     Fut15['BLD'+model] = cube[0,:,:]
@@ -209,7 +203,7 @@ models = ('GFDL', 'IPSL', 'MIROC','HadGEM2')
 Fut20 = {}
 for model in models:
     var_constraint = iris.Constraint(cube_func=lambda x: x.var_name == 'frac')
-    cube = jules.load_cube('/scratch/cburton/scratch/ISIMIP_PAPER/'+model+'/RCP60_2p0/Years_PFTlayers.nc', var_constraint).collapsed(['time'], iris.analysis.MEAN) 
+    cube = jules.load_cube('/MyScratchFolder/'+model+'/RCP60_2p0/Years_PFTlayers.nc', var_constraint).collapsed(['time'], iris.analysis.MEAN) 
     Fut20['BETr'+model] = cube[1,:,:]
     Fut20['BETe'+model] = cube[2,:,:]
     Fut20['BLD'+model] = cube[0,:,:]
