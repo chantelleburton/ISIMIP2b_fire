@@ -110,7 +110,7 @@ analyseModel <- function(dat, model, Temp = 1.5, switch = FALSE) {
         out
     }
     vout = lapply(seq(ntest*0+1, length(index), by = ntest), analyseGroup)
-    browser()
+    
     voutAll = do.call(cbind, vout)
     out = dat[[1]][[1:4]]
     out[] = NaN
@@ -142,7 +142,6 @@ forTemp <- function(Temp, ...)
 
 Temps = c(1, 1.5, 2)
 outs = lapply(Temps, forTemp)
-#outsF = lapply(Temps, forTemp, switch = TRUE)
 
 
 ##########
@@ -158,13 +157,6 @@ colsT = list(c('#67001f','#b2182b','#d6604d','#f4a582','#fddbc7'),
 out = outs[[3]]
 Temp = 2
 
-
-#a = -log(0.5)/Temp
-#limsT = -log(1-seq(0.1, 0.9, 0.1))/a
-#limsT[limsT < 2] = round(limsT[limsT <2], 1)
-#limsT[limsT > 2 & limsT < 3] = 0.5*round(2*limsT[limsT >2 & limsT < 3], 0)
-
-#limsT[limsT > 3] = round(limsT[limsT >3], 0)
 limsT = c(-1.2, -1, -0.8, -0.6, -0.4, -0.2, -0.1, 0, 0.1, 0.2, 0.4, 0.6, 0.8, 1, 1.2)
 maxT = min(apply(gwts[,grepl('6.0', names(gwts))], 2, max))
 
@@ -175,7 +167,7 @@ plotForTemp <- function(Temp, out, outF) {
 png(paste0("figs/degreeEquil-", Temp, ".png"), height = 6.5, width = 7.2, units = 'in', res = 300)
 layout(rbind(1:4, 5:8, 9, 10:13, 14:17, 18, 18+matrix(1:20, ncol = 4), 39, 40:43, 44), 
        heights = c(1, 1, 0.3, 1, 1, 0.3, rep(1, 5), 0.3, 1, 0.3))
-#dev.new()
+
 layout(cbind(1:5,6:10), heights = c(1, 1, 1, 1, 0.3))
 par(mar = rep(0, 4), oma = c(2, 2, 2, 0))
 
@@ -184,10 +176,6 @@ plotImpact <- function(res, name, mttext = "Impact", addModName = TRUE){
     if (addModName) mtext(name, side = 3, line = 0)
     if (name == models[1]) mtext(mttext, side = 2)
 }
-
-#mapply(plotImpact, out, models, "Impact fire off")
-#mapply(plotImpact, outF, models, "Impact fire on", FALSE)
-#StandardLegend(colsI, limsI, out[[1]][[1]])
 
 plotState <- function(res, name, mttext, id = 2:3, addModName = TRUE, letter = '') {
     r = res[[id[1]]]
@@ -206,7 +194,6 @@ plotState <- function(res, name, mttext, id = 2:3, addModName = TRUE, letter = '
 }
 
 unknown = mapply(plotState, out, names(models), "State", letter = letters[1:length(out)])
-#mapply(plotState, out, models, "Fire on", 3, FALSE)
 
 plot.new()
 legend('center', ncol = 2, pch = 15, col = colsS, pt.cex = 2, cex = 1.15,
