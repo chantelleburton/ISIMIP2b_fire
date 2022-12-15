@@ -1,31 +1,26 @@
-source("libs/filename.noPath.r")
 library(ncdf4)
 library(raster)
-source("../gitProjectExtras/gitBasedProjects/R/sourceAllLibs.r")
-sourceAllLibs("../gitProjectExtras/gitBasedProjects/R/")
-sourceAllLibs("libs")
-sourceAllLibs("../rasterextrafuns/rasterExtras/R/")
-source("libs/process_jules_file.r")
-source("libs/writeRaster.Standard.r")
-options(error=recover)
+source("libs/sourceAllLibs.r")
+sourceAllLibs("libs/")
 graphics.off()
 
 dir = '../ConFIRE_ISIMIP/INFERNOonOff/Global/'
+dir = 'zenodo_dat/'
 gwts = 'data/Tas_vs_year-ISIMIP.csv'
-historicID = "historic"
-futuresID = "RCP6.0"
 
-experiments = c("_off", "_on")
+experiments = c("_nofire", "_fire")
 models = c(HADGEM2 = "HADGEM2-ES", GFDL = "GFDL-ESM2M", MIROC = "MIROC5", 
             IPSL = "IPSL-CM5A-LR")
-variable = "trees"#, 'cveg', 'csoil') #, '
+variable = "frac"#, 'cveg', 'csoil') #, '
 
-tfile0 = 'temp2/degreeEquiv'
-
-openDat <- function(period, experiment, model, variable)    
-    brick(paste0(dir, period, experiment, '/', model, '/', variable, '.nc'))
-
-
+tfile0 = 'temp/'
+#tfile0 = '../ConFIRE_attribute/temp2/degreeEquiv'
+files = list.files(dir, full.names = TRUE)
+openDat <- function(experiment, model, variable)   {
+    file = files[grepl(experiment, files) & grepl(variable, files) & grepl(substr(model, 1, 4), files, ignore.case=TRUE)]
+    if (length(file) != 1) browser()
+    brick(file)
+}
 
 aa <- function(i, dat, ..., ncount = 11) {
     print(i)
@@ -38,14 +33,15 @@ aa <- function(i, dat, ..., ncount = 11) {
 }
 
 openAllP <- function(...) {
-    tfile = paste0(c(tfile0, 'running21all', futuresID,  ..., '.nc'), collapse = '-')
+    tfile = paste0(c(tfile0, 'running21all',  ..., '.nc'), collapse = '-')
     if (file.exists(tfile)) return(brick(tfile))
-    hist = openDat(historicID, ...)
-    futr = openDat(futuresID, ...)
+    #hist = openDat(historicID, ...)
+    #futr = openDat(futuresID, ...)
     
-    dat = addLayer(hist, futr)
-    
-    datYr = layer.apply(seq(12, nlayers(dat), by = 12), aa, dat, ...)
+    #dat = addLayer(hist, futr)
+    datYr = openDat(...)
+    #browser()
+    #datYr = layer.apply(seq(12, nlayers(dat), by = 12), aa, dat, ...)
     #browser()
     dat = layer.apply(21:nlayers(datYr), aa, datYr, 'running21', ..., ncount = 20)
     dat = dat/dat[[1]]
