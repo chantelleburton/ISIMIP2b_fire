@@ -16,6 +16,10 @@ models = c(HADGEM2 = "HADGEM2-ES", GFDL = "GFDL-ESM2M", MIROC = "MIROC5",
 variable = "frac"
 
 tfile0 = 'temp/'
+futuresID = 'RCP6.0'
+
+
+
 files = list.files(dir, full.names = TRUE)
 openDat <- function(experiment, model, variable)   {
     file = files[grepl(experiment, files) & grepl(variable, files) & grepl(substr(model, 1, 4), files, ignore.case=TRUE)]
