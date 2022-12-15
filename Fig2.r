@@ -1,20 +1,21 @@
+## set to data downloaded from zenodo
+dir = 'zenodo_dat/'
+
 library(ncdf4)
 library(raster)
 source("libs/sourceAllLibs.r")
 sourceAllLibs("libs/")
 graphics.off()
 
-dir = '../ConFIRE_ISIMIP/INFERNOonOff/Global/'
-dir = 'zenodo_dat/'
+
 gwts = 'data/Tas_vs_year-ISIMIP.csv'
 
 experiments = c("_nofire", "_fire")
 models = c(HADGEM2 = "HADGEM2-ES", GFDL = "GFDL-ESM2M", MIROC = "MIROC5", 
             IPSL = "IPSL-CM5A-LR")
-variable = "frac"#, 'cveg', 'csoil') #, '
+variable = "frac"
 
 tfile0 = 'temp/'
-#tfile0 = '../ConFIRE_attribute/temp2/degreeEquiv'
 files = list.files(dir, full.names = TRUE)
 openDat <- function(experiment, model, variable)   {
     file = files[grepl(experiment, files) & grepl(variable, files) & grepl(substr(model, 1, 4), files, ignore.case=TRUE)]
@@ -35,14 +36,8 @@ aa <- function(i, dat, ..., ncount = 11) {
 openAllP <- function(...) {
     tfile = paste0(c(tfile0, 'running21all',  ..., '.nc'), collapse = '-')
     if (file.exists(tfile)) return(brick(tfile))
-    #hist = openDat(historicID, ...)
-    #futr = openDat(futuresID, ...)
     
-    #dat = addLayer(hist, futr)
     datYr = openDat(...)
-    #browser()
-    #datYr = layer.apply(seq(12, nlayers(dat), by = 12), aa, dat, ...)
-    #browser()
     dat = layer.apply(21:nlayers(datYr), aa, datYr, 'running21', ..., ncount = 20)
     dat = dat/dat[[1]]
     dat = writeRaster(dat, file = tfile, overwrite = TRUE)
@@ -86,7 +81,6 @@ analyseCell <- function(i, dat, gwt, Temp = 1.5, ID) {
 }
 
 gwts = read.csv(gwts)[-1,]
-
 
 analyseModel <- function(dat, model, Temp = 1.5, switch = FALSE) {
     if (switch) tfile = paste('outputs/degreeEquiv2-switch', model, Temp, '.nc', sep = '-')
