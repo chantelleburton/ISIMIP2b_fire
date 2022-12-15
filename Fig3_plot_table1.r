@@ -3,7 +3,7 @@
 ## * Fig3_Calc_NBP.py
 ## * Fig3_NBP_CSV.py
 ## Run these first and set output file in path below"
-filename_dat = "data/Tas_vs_year.xlsx - NBP.csv"
+filename_dat = "data/NBP.dat"
 
 
 ###########
@@ -25,8 +25,8 @@ regions = c("Global", "BONA", "TENA", "CEAM", "NHSA", "SHSA", "EURO", "MIDE",
 
 accumulative = FALSE
 
-start_year = 2000
-nyears = 20
+start_year = 2010
+nyears = 10
 modTemp <- function(model) {
     id = which(dat[,2] == model) + 1
     if (model == 'H') id = id + 1
