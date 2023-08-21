@@ -1,8 +1,11 @@
-source("cfg.r")
-source("../LPX_equil/libs/legendColBar.r")
+library(ncdf4)
+library(raster)
+source("libs/sourceAllLibs.r")
+sourceAllLibs("libs/")
+graphics.off()
 
 
-dir = "../zenodo_dat/supplement/"
+dir = "zenodo_dat/supplement/"
  
 models = c("HADGEM2-ES", "GFDL-ESM2M","MIROC5", "IPSL-CM5A-LR")
 
